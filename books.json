@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "48 LAWS OF POWER",
+    "author": "stevo de sean",
+    "price": 5000.00,
+    "image": "images/lop.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Signs And Tokens",
+    "author": "stevo de sean",
+    "price": 10000.00,
+    "image": "images/signs.jpg"
+  },
+  {
+    "id": 3,
+    "title": "Atomic habits",
+    "author": "stevo de sean",
+    "price": 3000.00,
+    "image": "images/atom.jpg"
+  }
+]

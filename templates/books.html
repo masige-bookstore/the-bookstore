@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Books – Sean Bookstore</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <style>
+        /* Sidebar toggle button */
+        .sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            background: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+        .sidebar-toggle:hover {
+            background: #1c5980;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>📚 Sean Bookstore</h2>
+        <a href="{{ url_for('index') }}" class="nav-link">Shop 🏠</a>
+        <a href="{{ url_for('about') }}" class="nav-link">About 📖</a>
+        <a href="{{ url_for('contact') }}" class="nav-link">Contact 📞</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Dashboard ⚙️</a>
+        <button onclick="history.back()" class="back-button">← Back</button>
+    </aside>
+
+    <!-- Sidebar toggle button -->
+    <button class="sidebar-toggle" aria-label="Toggle Sidebar">☰</button>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <h1>📚 Manage Books</h1>
+        </header>
+
+        <section>
+            <h2>All Books</h2>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Price ($)</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr data-book-id="{{ book.id }}">
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ "%.2f"|format(book.price) }}</td>
+                        <td>
+                            <img src="{{ url_for('static', filename=book.image.replace('static/', '')) }}" alt="{{ book.title }}" width="50">
+                        </td>
+                        <td>
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Add New Book</h2>
+            <form method="POST" action="{{ url_for('add_book') }}" class="admin-form">
+                <label>Title: <input type="text" name="title" required></label>
+                <label>Author: <input type="text" name="author" required></label>
+                <label>Price: <input type="number" name="price" step="0.01" required></label>
+                <label>Image URL: <input type="text" name="image" required></label>
+                <button type="submit">Add Book</button>
+            </form>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Sean Bookstore. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <script>
+        // Sidebar toggle logic
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Delete book logic
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const bookRow = this.closest('tr');
+                const bookId = bookRow.getAttribute('data-book-id');
+                if (confirm("Are you sure you want to delete this book?")) {
+                    fetch(`/admin/delete_book/${bookId}`, { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                location.reload();
+                            } else {
+                                alert("Failed to delete book.");
+                            }
+                        });
+                }
+            });
+        });
+
+        // Edit book placeholder
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const bookRow = this.closest('tr');
+                const bookId = bookRow.getAttribute('data-book-id');
+                alert("Edit feature not implemented yet. Book ID: " + bookId);
+            });
+        });
+    </script>
+</body>
+</html>

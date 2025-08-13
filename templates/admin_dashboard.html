@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard – Sean Bookstore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <style>
+    main { padding: 20px; }
+    .dashboard-section { margin-bottom: 40px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #2980b9; color: white; }
+    button { background-color: #2980b9; color: white; border: none; padding: 6px 12px; margin: 2px; border-radius: 5px; cursor: pointer; }
+    button.delete { background-color: #c0392b; }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 1001;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+    }
+    .sidebar-toggle:hover { background: #1c5980; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <h2>📚 Sean Bookstore</h2>
+    <a href="{{ url_for('index') }}" class="nav-link">Shop 🏠</a>
+    <a href="{{ url_for('about') }}" class="nav-link">About 📖</a>
+    <a href="{{ url_for('contact') }}" class="nav-link">Contact 📞</a>
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Dashboard ⚙️</a>
+    <a href="{{ url_for('admin_logout') }}" class="nav-link">Logout ⬅️</a>
+  </aside>
+
+  <button class="sidebar-toggle" aria-label="Toggle Sidebar">☰</button>
+
+  <main>
+    <header>
+      <h1>⚙️ Admin Dashboard</h1>
+    </header>
+
+    <!-- Books Section -->
+    <section class="dashboard-section" id="books-section">
+      <h2>📚 Books</h2>
+      <button onclick="showAddBookForm()">Add New Book</button>
+
+      <form id="book-form" style="display:none; margin-top:20px;">
+        <input type="hidden" id="book-id" />
+        <label>Title: <input type="text" id="book-title" required /></label><br/>
+        <label>Author: <input type="text" id="book-author" required /></label><br/>
+        <label>Price: <input type="number" id="book-price" step="0.01" required /></label><br/>
+        <label>Image filename: <input type="text" id="book-image" placeholder="e.g. books/book1.jpg" required /></label><br/>
+        <button type="submit">Save Book</button>
+        <button type="button" onclick="hideBookForm()">Cancel</button>
+      </form>
+
+      <table id="books-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Title</th><th>Author</th><th>Price</th><th>Image</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+          <tr data-id="{{ book.id }}">
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>${{ "%.2f"|format(book.price) }}</td>
+            <td>{{ book.image }}</td>
+            <td>
+              <button onclick="editBook('{{ book.id }}')">Edit</button>
+              <button class="delete" onclick="deleteBook('{{ book.id }}')">Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="dashboard-section" id="transactions-section">
+      <h2>💳 Transactions</h2>
+      <p><i>Transactions data will be here (future update)</i></p>
+    </section>
+
+    <section class="dashboard-section" id="stats-section">
+      <h2>📊 Site Stats & Logs</h2>
+      <p><i>Site statistics and logs will be available here in future updates.</i></p>
+    </section>
+  </main>
+
+  <script>
+    // Sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.sidebar-toggle');
+
+    toggleBtn.addEventListener('click', () => sidebar.classList.toggle('active'));
+    document.addEventListener('click', (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+      }
+    });
+
+    // Book form functions
+    const bookForm = document.getElementById('book-form');
+    const booksTableBody = document.querySelector('#books-table tbody');
+
+    function showAddBookForm() {
+      bookForm.style.display = 'block';
+      document.getElementById('book-id').value = '';
+      document.getElementById('book-title').value = '';
+      document.getElementById('book-author').value = '';
+      document.getElementById('book-price').value = '';
+      document.getElementById('book-image').value = '';
+    }
+
+    function hideBookForm() {
+      bookForm.style.display = 'none';
+    }
+
+    function editBook(id) {
+      const row = booksTableBody.querySelector(`tr[data-id="${id}"]`);
+      if (!row) return;
+      document.getElementById('book-id').value = id;
+      document.getElementById('book-title').value = row.children[1].textContent;
+      document.getElementById('book-author').value = row.children[2].textContent;
+      document.getElementById('book-price').value = row.children[3].textContent.replace('$','');
+      document.getElementById('book-image').value = row.children[4].textContent;
+      bookForm.style.display = 'block';
+    }
+
+    function deleteBook(id) {
+      if (!confirm('Are you sure you want to delete this book?')) return;
+      // TODO: Replace with fetch() to backend DELETE endpoint
+      const row = booksTableBody.querySelector(`tr[data-id="${id}"]`);
+      if (row) row.remove();
+      alert('Book deleted (frontend only). Backend call not implemented.');
+    }
+
+    bookForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const id = document.getElementById('book-id').value;
+      const title = document.getElementById('book-title').value.trim();
+      const author = document.getElementById('book-author').value.trim();
+      const price = parseFloat(document.getElementById('book-price').value);
+      const image = document.getElementById('book-image').value.trim();
+
+      if (!title || !author || !price || !image) return alert('All fields are required!');
+
+      if (id) {
+        // Edit book (frontend only)
+        const row = booksTableBody.querySelector(`tr[data-id="${id}"]`);
+        row.children[1].textContent = title;
+        row.children[2].textContent = author;
+        row.children[3].textContent = `$${price.toFixed(2)}`;
+        row.children[4].textContent = image;
+        alert('Book updated (frontend only). Backend call not implemented.');
+      } else {
+        // Add new book (frontend only)
+        const newRow = document.createElement('tr');
+        newRow.setAttribute('data-id', Date.now()); // temporary ID
+        newRow.innerHTML = `
+          <td>${Date.now()}</td>
+          <td>${title}</td>
+          <td>${author}</td>
+          <td>$${price.toFixed(2)}</td>
+          <td>${image}</td>
+          <td>
+            <button onclick="editBook('${Date.now()}')">Edit</button>
+            <button class="delete" onclick="deleteBook('${Date.now()}')">Delete</button>
+          </td>
+        `;
+        booksTableBody.appendChild(newRow);
+        alert('Book added (frontend only). Backend call not implemented.');
+      }
+      hideBookForm();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About – Sean Bookstore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <style>
+    main { padding: 20px; }
+    #about-section { max-width: 800px; margin: 40px auto; }
+    ul { margin-left: 20px; }
+
+    /* Sidebar toggle button */
+    .sidebar-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 1001;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+    }
+    .sidebar-toggle:hover {
+      background: #1c5980;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>📚 Sean Bookstore</h2>
+    <a href="{{ url_for('index') }}" class="nav-link">Shop 🏠</a>
+    <a href="{{ url_for('checkout') }}" class="nav-link">Checkout 🛒</a>
+    <a href="{{ url_for('contact') }}" class="nav-link">Contact 📞</a>
+    <a href="{{ url_for('about') }}" class="nav-link">About 📖</a>
+    <a href="{{ url_for('admin') }}" class="nav-link">Admin ⚙️</a>
+  </aside>
+
+  <!-- Sidebar toggle button -->
+  <button class="sidebar-toggle" aria-label="Toggle Sidebar">☰</button>
+
+  <!-- Main Content -->
+  <main>
+    <header>
+      <h1>About Sean Bookstore</h1>
+    </header>
+
+    <section id="about-section">
+      <p>Welcome to Sean Bookstore — your one-stop shop for great books and reading inspiration. We are passionate about connecting readers with their next favorite book through our carefully curated selection.</p>
+
+      <h3>Our Mission</h3>
+      <p>We strive to offer quality books at affordable prices, delivered with excellent customer service and a seamless shopping experience.</p>
+
+      <h3>Why Choose Us?</h3>
+      <ul>
+        <li>Wide selection of genres and authors</li>
+        <li>Competitive pricing and regular promotions</li>
+        <li>Fast and reliable shipping</li>
+        <li>Dedicated customer support</li>
+      </ul>
+
+      <h3>Contact Us</h3>
+      <p>If you have questions or want book recommendations, please visit our <a href="{{ url_for('contact') }}">Contact page</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Sean Bookstore. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Sidebar toggle logic
+    const sidebar = document.querySelector('.sidebar');
+    const toggleBtn = document.querySelector('.sidebar-toggle');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

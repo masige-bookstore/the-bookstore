@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact – Sean Bookstore</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <style>
+        /* Sidebar toggle button */
+        .sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            background: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+        .sidebar-toggle:hover {
+            background: #1c5980;
+        }
+/* Social icons styling */
+#social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* spacing between icons */
+    margin-top: 10px;
+}
+
+#social-links a img {
+    width: 40px;  /* smaller size */
+    height: 40px;
+    transition: transform 0.2s;
+}
+
+#social-links a img:hover {
+    transform: scale(1.2); /* subtle hover effect */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    #social-links {
+        justify-content: center;
+    }
+    #social-links a img {
+        width: 30px;
+        height: 30px;
+    }
+}
+#send-button {
+    background: #3498db;           /* nice blue color */
+    color: white;                  /* text color */
+    padding: 12px 20px;            /* more comfortable size */
+    border: none;                  /* remove default border */
+    border-radius: 8px;            /* rounded corners */
+    font-weight: bold;             /* make text stand out */
+    font-size: 1rem;               /* readable size */
+    cursor: pointer;               /* pointer on hover */
+    transition: background 0.3s, transform 0.2s; /* smooth hover */
+}
+
+#send-button:hover {
+    background: #2980b9;           /* slightly darker on hover */
+    transform: scale(1.05);        /* subtle zoom effect */
+}
+
+
+
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>📚 Sean Bookstore</h2>
+        <a href="{{ url_for('index') }}" class="checkout-button">Back to Shop 🏠</a>
+        <a href="{{ url_for('checkout') }}" class="checkout-button">Checkout 🛒</a>
+        <a href="{{ url_for('about') }}" class="nav-link">About 📖</a>
+        <a href="{{ url_for('admin') }}" class="nav-link">Admin ⚙️</a>
+        <button onclick="history.back()" class="back-button" aria-label="Go Back" title="Go Back">← Back</button>
+    </aside>
+
+    <!-- Sidebar toggle button -->
+    <button class="sidebar-toggle" aria-label="Toggle Sidebar">☰</button>
+
+    <!-- Main Content -->
+    <main>
+        <section id="contact-info" class="contact-container">
+            <h1>📞 Contact Us</h1>
+            <h2>Store Contact Details</h2>
+            <p><strong>Phone:</strong> +255 710 379 610<br>+255 757 808 854</p>
+            <p><strong>Email:</strong> stevodesean@gmail.com</p>
+            <p><strong>Address:</strong> Goba Matosa, Dar es Salaam, Tanzania</p>
+
+            <h3>Follow Us:</h3>
+            <div id="social-links">
+                <a href="https://wa.me/255710379610" target="_blank">
+                    <img src="{{ url_for('static', filename='images/whatsapp.ico') }}" alt="WhatsApp" />
+                </a>
+                <a href="#" target="_blank">
+                    <img src="{{ url_for('static', filename='images/insta.ico') }}" alt="Instagram" />
+                </a>
+                <a href="#" target="_blank">
+                    <img src="{{ url_for('static', filename='images/x.ico') }}" alt="X" />
+                </a>
+                <a href="#" target="_blank">
+                    <img src="{{ url_for('static', filename='images/git.ico') }}" alt="Github" />
+                </a>
+                <a href="#" target="_blank">
+                    <img src="{{ url_for('static', filename='images/tiktok.ico') }}" alt="TikTok" />
+                </a>
+            </div>
+
+            <hr>
+
+            <h2>Send Us a Message</h2>
+            <form id="contact-form" class="admin-form">
+                <input type="text" id="name" placeholder="Your Name" required />
+                <input type="email" id="email" placeholder="Your Email" required />
+                <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit" id="send-button">Send Message ✉️</button>
+                <div id="contact-result"></div>
+            </form>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Sean Bookstore. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <!-- External JS -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+    <script>
+        // Sidebar toggle logic
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Contact form submission
+        const contactForm = document.getElementById('contact-form');
+        const contactResult = document.getElementById('contact-result');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                contactResult.style.color = 'red';
+                contactResult.textContent = "❌ Please fill out all fields.";
+                return;
+            }
+
+            contactResult.style.color = 'green';
+            contactResult.textContent = `✅ Thank you, ${name}! Your message has been sent.`;
+            contactForm.reset();
+        });
+    </script>
+</body>
+</html>
